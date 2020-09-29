@@ -79,7 +79,12 @@ def run_number_extraction(run_config_path):
     if not chat_links is None:
         for link in chat_links:
             bot.send_message(link)
-            print("fim")
+            print("Message sended!")
+
+    if not saved_numbers is None:
+        for name in saved_numbers:
+            bot.send_message(None, name)
+            print("Message sended!")
    
 def run_phone_number_bot(headless=True, chrome_driver=None):
     # Initialize a WhatsappBot and run the bot to get phone number
@@ -92,7 +97,7 @@ def run_phone_number_bot(headless=True, chrome_driver=None):
     
     bot = WhatsappBot(headless=headless, chrome_driver=chrome_driver)#XX
     try:
-        numbers = bot.get_phone_number()
+        numbers = bot.get_phone_number("Armário")
     finally:
         print("Retriving phone number finished!")
     

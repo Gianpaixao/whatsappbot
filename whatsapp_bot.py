@@ -167,12 +167,12 @@ class WhatsappBot():
         except:
             logging.info('Failed to click.')
 
-    def search_group(self):
-        group_name = "Teste robô"
+    def search_group(self, group_name):
 
         try:
             # Search chat
-            self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
+            #self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
+            self.driver.find_elements_by_xpath('//*[contains(@title, "' + group_name + '")]')[0].click()
             time.sleep(2)
 
             # Get phone numbers
@@ -183,7 +183,8 @@ class WhatsappBot():
             search = self.driver.find_element_by_xpath("//*[@id='side']/div[1]/div/label/div/div[2]")
             search.clear()
             atomic_pyperclip(self, search, group_name)
-            self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
+            #self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
+            self.driver.find_elements_by_xpath('//*[contains(@title, "' + group_name + '")]')[0].click()
             time.sleep(2)
 
             numbers = self.driver.find_element_by_css_selector('#main > header > div._33QME > div._2ruUq._3xjAz > span').text.split(", ")
@@ -191,7 +192,7 @@ class WhatsappBot():
         return numbers
 
 
-    def get_phone_number(self):
+    def get_phone_number(self, group_name):
         # Navigate to whatsapp webpage
         self.driver.get(self.url)
 
@@ -209,7 +210,7 @@ class WhatsappBot():
             logging.info("Whastapp was already logged!")
 
         try:
-            numbers = self.search_group()
+            numbers = self.search_group(group_name)
             time.sleep(3)
         except:
             numbers = None
@@ -217,10 +218,29 @@ class WhatsappBot():
         
         return numbers
 
-    def send_message(self, link):
-        # Navigate to whatsapp webpage
-        print(link)
-        self.driver.get(link)
+    def send_message(self, link, saved_contact=None):
+        
+        if not saved_contact is None:
+            try:
+                # Search chat
+                #self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
+                self.driver.find_elements_by_xpath('//*[contains(@title, "' + saved_contact + '")]')[1].click()
+                time.sleep(2)
+
+            except:    
+                logging.error("Does not have contact chat.")
+
+                search = self.driver.find_element_by_xpath("//*[@id='side']/div[1]/div/label/div/div[2]")
+                search.clear()
+                atomic_pyperclip(self, search, saved_contact)
+                #self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
+                self.driver.find_elements_by_xpath('//*[contains(@title, "' + saved_contact + '")]')[1].click()
+                time.sleep(2)
+
+        else:
+            # Navigate to whatsapp webpage
+            print(link)
+            self.driver.get(link)
 
         # Click send
         if self.wait_element_until_appear("//*[@id='main']/footer/div[1]/div[3]/button"):
