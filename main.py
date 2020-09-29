@@ -65,13 +65,14 @@ def run_number_extraction(run_config_path):
     # Create list variable
     chat_links = None
     saved_numbers = None
+    group_name = "Armário"
 
     with open(run_config_path,'r') as json_file:
         data = json.load(json_file)
 
     print("Headless:"+str(data['headless']))
 
-    bot, numbers = run_phone_number_bot(headless=str(data['headless']))
+    bot, numbers = run_phone_number_bot(group_name, headless=str(data['headless']))
 
     if not numbers is None:
         chat_links, saved_numbers = create_whatsapp_link(numbers)
@@ -81,12 +82,12 @@ def run_number_extraction(run_config_path):
             bot.send_message(link)
             print("Message sended!")
 
-    if not saved_numbers is None:
-        for name in saved_numbers:
-            bot.send_message(None, name)
-            print("Message sended!")
+    #if not saved_numbers is None:
+    #    for name in saved_numbers:
+    #        bot.send_message(None, name, group_name)
+    #        print("Message sended!")
    
-def run_phone_number_bot(headless=True, chrome_driver=None):
+def run_phone_number_bot(group_name, headless=True, chrome_driver=None):
     # Initialize a WhatsappBot and run the bot to get phone number
     
     logging.info('Starting getting phone number')
@@ -97,7 +98,7 @@ def run_phone_number_bot(headless=True, chrome_driver=None):
     
     bot = WhatsappBot(headless=headless, chrome_driver=chrome_driver)#XX
     try:
-        numbers = bot.get_phone_number("Armário")
+        numbers = bot.get_phone_number(group_name)
     finally:
         print("Retriving phone number finished!")
     

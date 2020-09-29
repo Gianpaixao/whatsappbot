@@ -169,25 +169,9 @@ class WhatsappBot():
 
     def search_group(self, group_name):
 
-        try:
-            # Search chat
-            #self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
-            self.driver.find_elements_by_xpath('//*[contains(@title, "' + group_name + '")]')[0].click()
-            time.sleep(2)
+        self.click_group(group_name)
 
-            # Get phone numbers
-            numbers = self.driver.find_element_by_css_selector('#main > header > div._33QME > div._2ruUq._3xjAz > span').text.split(", ")
-        except:    
-            logging.error("Failed to get phone numbers. Trying again!")
-
-            search = self.driver.find_element_by_xpath("//*[@id='side']/div[1]/div/label/div/div[2]")
-            search.clear()
-            atomic_pyperclip(self, search, group_name)
-            #self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
-            self.driver.find_elements_by_xpath('//*[contains(@title, "' + group_name + '")]')[0].click()
-            time.sleep(2)
-
-            numbers = self.driver.find_element_by_css_selector('#main > header > div._33QME > div._2ruUq._3xjAz > span').text.split(", ")
+        numbers = self.driver.find_element_by_css_selector('#main > header > div._33QME > div._2ruUq._3xjAz > span').text.split(", ")
 
         return numbers
 
@@ -218,26 +202,23 @@ class WhatsappBot():
         
         return numbers
 
-    def send_message(self, link, saved_contact=None):
+    def send_message(self, link, saved_contact=None, group_name=None):
         
-        if not saved_contact is None:
+        if not saved_contact is None and not group_name is None:
+            # Clear search bar
             try:
-                # Search chat
-                #self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
-                self.driver.find_elements_by_xpath('//*[contains(@title, "' + saved_contact + '")]')[1].click()
-                time.sleep(2)
+                self.driver.find_element_by_xpath("//*[@id='side']/div[1]/div/span/button").click()
+            except:
+                pass
 
-            except:    
-                logging.error("Does not have contact chat.")
+            self.click_group(group_name)
+            self.driver.find_elements_by_xpath('//*[contains(@title, "' + group_name + '")]')[1].click()
+            time.sleep(2)
 
-                search = self.driver.find_element_by_xpath("//*[@id='side']/div[1]/div/label/div/div[2]")
-                search.clear()
-                atomic_pyperclip(self, search, saved_contact)
-                #self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
-                self.driver.find_elements_by_xpath('//*[contains(@title, "' + saved_contact + '")]')[1].click()
-                time.sleep(2)
+            self.driver.find_elements_by_xpath('//*[contains(@title, "' + saved_contact + '")]')[1].click()
 
-        else:
+
+        elif not link is None:
             # Navigate to whatsapp webpage
             print(link)
             self.driver.get(link)
@@ -258,3 +239,21 @@ class WhatsappBot():
                 loop += 1
                 return False
         return True
+
+    def click_group(self, group_name):
+        try:
+            # Search chat
+            #self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
+            self.driver.find_elements_by_xpath('//*[contains(@title, "' + group_name + '")]')[0].click()
+            time.sleep(2)
+
+        except:    
+            logging.error("Failed to click in group. Trying again!")
+
+            search = self.driver.find_element_by_xpath("//*[@id='side']/div[1]/div/label/div/div[2]")
+            search.clear()
+            atomic_pyperclip(self, search, group_name)
+            time.sleep(2)
+            #self.driver.find_element_by_css_selector('span[title="' + group_name + '"]').click()
+            self.driver.find_elements_by_xpath('//*[contains(@title, "' + group_name + '")]')[0].click()
+            time.sleep(2)
